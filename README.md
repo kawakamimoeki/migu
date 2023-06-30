@@ -85,7 +85,6 @@ migu rollback
 
 ```bash
 $ migu ls
-bundle exec migu ls
 CreateUsers migrated
 CreatePosts not_migrated
 ```
