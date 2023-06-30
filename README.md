@@ -1,6 +1,6 @@
 # Migu
 
-Migu is a migration tool for vector databases that lack a well-established migration mechanism. It is implemented as a Ruby code base.
+Migu is a plain Ruby code base migration tool for vector databases that lack a well-established migration mechanism.
 
 ## Installation
 
