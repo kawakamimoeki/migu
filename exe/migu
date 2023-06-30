@@ -1,0 +1,105 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "dry/cli"
+require "migu"
+
+module Migu
+  module CLI
+    module Commands
+      extend Dry::CLI::Registry
+
+      class Version < Dry::CLI::Command
+        desc "Print version"
+
+        def call(*)
+          puts "v#{Migu::VERSION}"
+        end
+      end
+
+      class Init < Dry::CLI::Command
+        desc "Initialize Migu SQLite3 database. migu/state.sqlite3 will be created."
+
+        def call(*)
+          if Migu::State.new.db.execute("select * from sqlite_master where type = 'table' and name = 'state'").empty?
+            puts "Already initialized"
+            return
+          end
+          Migu::State.new.create_table
+          puts "Migu initialized"
+        end
+      end
+
+      class Reset < Dry::CLI::Command
+        desc "Migu Reset"
+
+        def call(*)
+          if Migu::State.new.db.execute("select * from sqlite_master where type = 'table' and name = 'state'").empty?
+            puts "Already reset"
+            return
+          end
+          Migu::State.new.migrated.each do |migration|
+            if migration.nil?
+              break
+            end
+            puts "==== Rollback #{migration[1]} ===="
+            migration_class = Migu::Migrator.new.migrations.find { |migration|
+              migration.name == migration[1]
+            }
+            migration_class.new.down
+            Migu::State.new.delete(migration[1])
+          end
+          Migu::State.new.reset_table
+          puts "Migu reset"
+        end
+      end
+
+      class Migrate < Dry::CLI::Command
+        desc "Migrate all migrations"
+
+        def call
+          Migu::Migrator.new.migrate
+        end
+      end
+
+      class Rollback < Dry::CLI::Command
+        desc "Rollback 1 migration"
+
+        def call
+          Migu::Migrator.new.rollback
+        end
+      end
+
+      class Generate < Dry::CLI::Command
+        desc "Generate migration file to migu/migrate/ directory"
+
+        argument :name, required: true, desc: "migration name"
+
+        def call(name:, **)
+          filepath = Migu::Generator.new.generate(name)
+          puts "Generated #{filepath}"
+        end
+      end
+
+      class Ls < Dry::CLI::Command
+        desc "List migrations"
+
+        def call(*)
+          Migu::Migrator.new.migrations.each do |migration|
+            puts "#{migration.name} #{Migu::State.new.find(migration.name) ? "migrated" : "not_migrated"}"
+          end
+        end
+      end
+
+      register "version", Version, aliases: ["v", "-v", "--version"]
+      register "init", Init
+      register "reset", Reset
+      register "migrate", Migrate
+      register "rollback", Rollback
+      register "generate", Generate
+      register "ls", Ls
+    end
+  end
+end
+
+Dry::CLI.new(Migu::CLI::Commands).call
