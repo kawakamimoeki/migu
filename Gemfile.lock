@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    migu (0.1.0)
+    migu (0.1.1)
       activesupport (~> 4.2)
       dry-cli (~> 1.0)
       sqlite3 (~> 1.6)
