@@ -62,6 +62,7 @@ class CreateUsers < Migu::Migration
   end
 
   def down
+    client = Weaviate::Client.new
     client.schema.delete(
       # ...
     )
