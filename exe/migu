@@ -21,11 +21,9 @@ module Migu
         desc "Initialize Migu SQLite3 database. migu/state.sqlite3 will be created."
 
         def call(*)
-          if Migu::State.new.db.execute("select * from sqlite_master where type = 'table' and name = 'state'").empty?
-            puts "Already initialized"
-            return
-          end
           Migu::State.new.create_table
+          Migu.generate_config
+
           puts "Migu initialized"
         end
       end

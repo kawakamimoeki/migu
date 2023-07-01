@@ -31,5 +31,23 @@ EOS
         return filepath
       end
     end
+
+    def generate_config
+      Dir.mkdir("migu") unless Dir.exist?("migu")
+      filepath = "migu/config.rb"
+      File.open(filepath, "w") do |file|
+        file.write(<<-EOS)
+  Migu.configuration do |config|
+    config.before do
+      # before hook
+    end
+  
+    config.after do
+      # after hook
+    end
+  end
+        EOS
+      end
+    end
   end
 end

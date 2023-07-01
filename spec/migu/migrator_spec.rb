@@ -1,3 +1,13 @@
+Migu.configuration do |config|
+  config.before do
+    p "before"
+  end
+
+  config.after do
+    p "after"
+  end
+end
+
 class CreateUsers < Migu::Migration
   def self.time
     "2019-01-01 00:00:00 +0900"
