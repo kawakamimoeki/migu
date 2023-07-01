@@ -1,6 +1,6 @@
 # Migu
 
-Migu is a migration tool for vector databases that lack a well-established migration mechanism. It is implemented as a Ruby code base.
+Migu is a plain Ruby code base migration tool for vector databases that lack a well-established migration mechanism.
 
 ## Installation
 
@@ -62,6 +62,7 @@ class CreateUsers < Migu::Migration
   end
 
   def down
+    client = Weaviate::Client.new
     client.schema.delete(
       # ...
     )
@@ -85,7 +86,6 @@ migu rollback
 
 ```bash
 $ migu ls
-bundle exec migu ls
 CreateUsers migrated
 CreatePosts not_migrated
 ```
