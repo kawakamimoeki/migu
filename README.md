@@ -1,5 +1,9 @@
 # Migu
 
+![v](https://badgen.net/rubygems/v/migu)
+![dt](https://badgen.net/rubygems/dt/migu)
+![license](https://badgen.net/github/license/moekidev/migu)
+
 Migu is a plain Ruby code base migration tool for vector databases that lack a well-established migration mechanism.
 
 ## Installation
